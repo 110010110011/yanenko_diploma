@@ -123,170 +123,225 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget>
           ),
         ],
       ),
+
       Row(
         children: [
           Expanded(
-              child: TextField(
-                  focusNode: FirstDisabledFocusNode(),
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: "Time per pixel, ms" + tscan.toString()),
-                  textAlign: TextAlign.center,
-                  onSubmitted: (String string) {
-                    tscan = int.tryParse(string)!;
-                    _controller.duration = Duration(seconds: tscan);
-                  })),
-          Expanded(
-              child: TextField(
-                  focusNode: FirstDisabledFocusNode(),
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: "Size in Pixels"),
-                  textAlign: TextAlign.center,
-                  onSubmitted: (String string) {
-                    setState(() {
-                      int imgpxl = nmbrpxls * nmbrpxls;
-                      for (int i = 0; i < imgpxl; i++) {
-                        alphaList.removeLast();
-                        redList.removeLast();
-                        greenList.removeLast();
-                        blueList.removeLast();
-                      }
-                      nmbrpxls = int.tryParse(string)!;
-                      imgpxl = nmbrpxls * nmbrpxls;
-                      final random = Random();
-                      for (int i = 0; i < imgpxl; i++) {
-                        alphaList.add(random.nextInt(255));
-                        redList.add(random.nextInt(255));
-                        greenList.add(random.nextInt(255));
-                        blueList.add(random.nextInt(255));
-                      }
-                    });
-                  })),
-        ],
-      ),
-      Row(
-        children: [
-          Expanded(
-            child: DropdownButtonFormField(
-              decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: "Feedback"),
-              value: "-1",
-              items: [
-                DropdownMenuItem(child: TextField(
-                  focusNode: FirstDisabledFocusNode(),
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
+              child: DropdownButtonFormField(
+                decoration: InputDecoration(
                     border: OutlineInputBorder(),
-                    labelText: "Feedback Proportional"
-                  ),
-                  textAlign: TextAlign.center,
-                  onSubmitted: (String string) {
-                    tscan = int.tryParse(string)!;
-                  },
-                ), value: "-1",),
+                    labelText: "All parmeters"),
+                  value: "-1",
+                  items: [
+                    DropdownMenuItem(
+                        child:
+                        Text("Time per pixel, ms"+ tscan.toString()), value: "-1",),
+                    DropdownMenuItem(
+                      child:
+                      Text("Feedback1"), value: "1",),
+                    DropdownMenuItem(
+                      child:
+                      Text("Feedback2"), value: "2",),
+                    DropdownMenuItem(
+                      child:
+                      Text("Feedback2"), value: "3",),
+                    DropdownMenuItem(
+                      child:
+                      Text("Size in Pixels"), value: "4",),
+                    DropdownMenuItem(
+                      child:
+                      Text("Size in nm"), value: "5",),
+                    DropdownMenuItem(
+                      child:
+                      Text("Sample Bias, V"), value: "6",),
+                    DropdownMenuItem(
+                      child:
+                      Text("Tunneling Current, nA"), value: "7",),
+                    DropdownMenuItem(
+                      child:
+                      Text("Sample Name"), value: "8",),
+                    DropdownMenuItem(
+                      child:
+                      Text("Sample Name"), value: "9",),
+                  ],
+                  onChanged: (v) {},
+              )
+          )
+        ],
+      ),
 
-                DropdownMenuItem(child: TextField(
-                    focusNode: FirstDisabledFocusNode(),
+      Row(
+        children: [
+          Expanded(
+              child: TextField(
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: "Feedback Differential"
-                  ),
+                  border: OutlineInputBorder(),
+                  labelText: "Input your parameters"),
                   textAlign: TextAlign.center,
-                    onSubmitted: (String string) {
-                      // nmbrpxl = int.tryParse(string)!;
-                    }
-                ), value: "1",),
-
-                DropdownMenuItem(child: TextField(
-                    focusNode: FirstDisabledFocusNode(),
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: "Feedback Integral"
-                  ),
-                  textAlign: TextAlign.center,
-                    onSubmitted: (String string) {
-                      //tscan = int.tryParse(string)!;
-                    }
-                ), value: "2",),
-              ],
-
-              onChanged: (v){},
-            ),
-            // TextField(
-            //     keyboardType: TextInputType.number,
-            //     decoration: InputDecoration(
-            //         border: OutlineInputBorder(),
-            //         labelText: "Feedback Proportional"),
-            //     textAlign: TextAlign.center,
-            //     onSubmitted: (String string) {
-            //       //  tscan = int.tryParse(string)!;
-            //     })
+                  onSubmitted: (String string) {}
+              ),
           ),
-          Expanded(
-              child: TextField(
-                  focusNode: FirstDisabledFocusNode(),
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                      border: OutlineInputBorder(), labelText: "Size in nm"),
-                  textAlign: TextAlign.center,
-                  onSubmitted: (String string) {
-                    // nmbrpxl = int.tryParse(string)!;
-                  })),
         ],
       ),
 
-      Row(
-        children: [
-          Expanded(
-              child: TextField(
-                  focusNode: FirstDisabledFocusNode(),
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: "Sample Bias, V"),
-                  textAlign: TextAlign.center,
-                  onSubmitted: (String string) {
-                    //tscan = int.tryParse(string)!;
-                  })),
-          Expanded(
-              child: TextField(
-                  focusNode: FirstDisabledFocusNode(),
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: "Tunneling Current, nA"),
-                  textAlign: TextAlign.center,
-                  onSubmitted: (String string) {
-//                    nmbrpxl = int.tryParse(string)!;
-                  })),
-        ],
-      ),
-      Row(
-        children: [
-          Expanded(
-              child: TextField(
-                  focusNode: FirstDisabledFocusNode(),
-                  keyboardType: TextInputType.text,
-                  decoration: InputDecoration(
-                      border: OutlineInputBorder(), labelText: "Sample Name"),
-                  textAlign: TextAlign.center,
-                  onSubmitted: (String string) {})),
-          Expanded(
-              child: TextField(
-                  focusNode: FirstDisabledFocusNode(),
-                  keyboardType: TextInputType.text,
-                  decoration: InputDecoration(
-                      border: OutlineInputBorder(), labelText: "Tip Name"),
-                  textAlign: TextAlign.center,
-                  onSubmitted: (String string) {})),
-        ],
-      )
+
+//       Row(
+//         children: [
+//           Expanded(
+//               child: TextField(
+//                   focusNode: FirstDisabledFocusNode(),
+//                   keyboardType: TextInputType.number,
+//                   decoration: InputDecoration(
+//                       border: OutlineInputBorder(),
+//                       labelText: "Time per pixel, ms" + tscan.toString()),
+//                   textAlign: TextAlign.center,
+//                   onSubmitted: (String string) {
+//                     tscan = int.tryParse(string)!;
+//                     _controller.duration = Duration(seconds: tscan);
+//                   })),
+//           Expanded(
+//               child: TextField(
+//                   focusNode: FirstDisabledFocusNode(),
+//                   keyboardType: TextInputType.number,
+//                   decoration: InputDecoration(
+//                       border: OutlineInputBorder(),
+//                       labelText: "Size in Pixels"),
+//                   textAlign: TextAlign.center,
+//                   onSubmitted: (String string) {
+//                     setState(() {
+//                       int imgpxl = nmbrpxls * nmbrpxls;
+//                       for (int i = 0; i < imgpxl; i++) {
+//                         alphaList.removeLast();
+//                         redList.removeLast();
+//                         greenList.removeLast();
+//                         blueList.removeLast();
+//                       }
+//                       nmbrpxls = int.tryParse(string)!;
+//                       imgpxl = nmbrpxls * nmbrpxls;
+//                       final random = Random();
+//                       for (int i = 0; i < imgpxl; i++) {
+//                         alphaList.add(random.nextInt(255));
+//                         redList.add(random.nextInt(255));
+//                         greenList.add(random.nextInt(255));
+//                         blueList.add(random.nextInt(255));
+//                       }
+//                     });
+//                   })),
+//         ],
+//       ),
+//       Row(
+//         children: [
+//           Expanded(
+//             child:
+//             TextField(
+//                   focusNode: FirstDisabledFocusNode(),
+//                   keyboardType: TextInputType.number,
+//                   decoration: InputDecoration(
+//                       border: OutlineInputBorder(),
+//                       labelText: "Feedback Proportional"
+//                   ),
+//                   textAlign: TextAlign.center,
+//                   onSubmitted: (String string) {
+//                   //   tscan = int.tryParse(string)!;
+//                   },
+//                 ),
+//           ),
+//
+//           Expanded(
+//             child:
+//             TextField(
+//                 focusNode: FirstDisabledFocusNode(),
+//                 keyboardType: TextInputType.number,
+//                 decoration: InputDecoration(
+//                     border: OutlineInputBorder(),
+//                     labelText: "Feedback Differential"
+//                 ),
+//                 textAlign: TextAlign.center,
+//                   onSubmitted: (String string) {
+//                     // nmbrpxl = int.tryParse(string)!;
+//                   }
+//               ),
+//           ),
+//         ],
+//       ),
+//
+//       Row(
+//         children: [
+//           Expanded(
+//             child:
+//             TextField(
+//                 focusNode: FirstDisabledFocusNode(),
+//                 keyboardType: TextInputType.number,
+//                 decoration: InputDecoration(
+//                     border: OutlineInputBorder(),
+//                     labelText: "Feedback Integral"
+//                 ),
+//                 textAlign: TextAlign.center,
+//                 onSubmitted: (String string) {
+//                   //tscan = int.tryParse(string)!;
+//                 }
+//             ),
+//           ),
+//           Expanded(
+//               child: TextField(
+//                   focusNode: FirstDisabledFocusNode(),
+//                   keyboardType: TextInputType.number,
+//                   decoration: InputDecoration(
+//                       border: OutlineInputBorder(), labelText: "Size in nm"),
+//                   textAlign: TextAlign.center,
+//                   onSubmitted: (String string) {
+//                     // nmbrpxl = int.tryParse(string)!;
+//                   })),
+//         ],
+//       ),
+//
+//       Row(
+//         children: [
+//           Expanded(
+//               child: TextField(
+//                   focusNode: FirstDisabledFocusNode(),
+//                   keyboardType: TextInputType.number,
+//                   decoration: InputDecoration(
+//                       border: OutlineInputBorder(),
+//                       labelText: "Sample Bias, V"),
+//                   textAlign: TextAlign.center,
+//                   onSubmitted: (String string) {
+//                     //tscan = int.tryParse(string)!;
+//                   })),
+//           Expanded(
+//               child: TextField(
+//                   focusNode: FirstDisabledFocusNode(),
+//                   keyboardType: TextInputType.number,
+//                   decoration: InputDecoration(
+//                       border: OutlineInputBorder(),
+//                       labelText: "Tunneling Current, nA"),
+//                   textAlign: TextAlign.center,
+//                   onSubmitted: (String string) {
+// //                    nmbrpxl = int.tryParse(string)!;
+//                   })),
+//         ],
+//       ),
+//       Row(
+//         children: [
+//           Expanded(
+//               child: TextField(
+//                   focusNode: FirstDisabledFocusNode(),
+//                   keyboardType: TextInputType.text,
+//                   decoration: InputDecoration(
+//                       border: OutlineInputBorder(), labelText: "Sample Name"),
+//                   textAlign: TextAlign.center,
+//                   onSubmitted: (String string) {})),
+//           Expanded(
+//               child: TextField(
+//                   focusNode: FirstDisabledFocusNode(),
+//                   keyboardType: TextInputType.text,
+//                   decoration: InputDecoration(
+//                       border: OutlineInputBorder(), labelText: "Tip Name"),
+//                   textAlign: TextAlign.center,
+//                   onSubmitted: (String string) {})),
+//         ],
+//       )
 
     ]);
   }
