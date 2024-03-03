@@ -1,5 +1,7 @@
+import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
+
 
 import 'package:flutter/material.dart';
 
@@ -21,7 +23,7 @@ class SPMapp extends StatelessWidget {
         title: _title,
           home: Scaffold(
           appBar: AppBar(title: const Text(_title)),
-          body: MyStatefulWidget(), //duration: Duration(seconds: tscan)),
+          body: const MyStatefulWidget(), //duration: Duration(seconds: tscan)),
         ));
   }
 }
@@ -45,6 +47,10 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget>
   int tscan = 10;
   late AnimationController _controller;
   late Uint8List imageData; //
+  String? dropdownSelectedValue = "0";
+  String? sampleName;
+  String? tipName;
+
 
   @override
   void initState() {
@@ -81,6 +87,62 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget>
       blueList.removeLast();
     }  */
     super.dispose();
+  }
+
+  void setValue(String input){
+
+    switch (dropdownSelectedValue){
+      case "-1":
+        tscan = int.tryParse(input)!;
+        _controller.duration = Duration(seconds: tscan);
+        break;
+      case "0":
+        break;
+      case "1":
+        tscan = int.tryParse(input)!;
+        break;
+      case "2":
+        tscan = int.tryParse(input)!;
+        break;
+      case "3":
+        // nmbrpxl = int.tryParse(input)!;
+        break;
+      case "4":
+        setState(() {
+          int imgpxl = nmbrpxls * nmbrpxls;
+          for (int i = 0; i < imgpxl; i++) {
+            alphaList.removeLast();
+            redList.removeLast();
+            greenList.removeLast();
+            blueList.removeLast();
+          }
+          nmbrpxls = int.tryParse(input)!;
+          imgpxl = nmbrpxls * nmbrpxls;
+          final random = Random();
+          for (int i = 0; i < imgpxl; i++) {
+            alphaList.add(random.nextInt(255));
+            redList.add(random.nextInt(255));
+            greenList.add(random.nextInt(255));
+            blueList.add(random.nextInt(255));
+          }
+        });
+        break;
+      case "5":
+        // nmbrpxl = int.tryParse(input)!;
+        break;
+      case "6":
+        tscan = int.tryParse(input)!;
+        break;
+      case "7":
+        // nmbrpxl = int.tryParse(input)!;
+        break;
+      case "8":
+        sampleName = input;
+        break;
+      case "9":
+        tipName = input;
+        break;
+    }
   }
 
   @override
@@ -128,43 +190,53 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget>
         children: [
           Expanded(
               child: DropdownButtonFormField(
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: "All parmeters"),
-                  value: "-1",
+                  value: "0",
                   items: [
                     DropdownMenuItem(
+                        value: "0",
                         child:
-                        Text("Time per pixel, ms"+ tscan.toString()), value: "-1",),
-                    DropdownMenuItem(
+                        Text("Time per pixel, ms"+ tscan.toString()),),
+                    const DropdownMenuItem(
+                      value: "1",
                       child:
-                      Text("Feedback1"), value: "1",),
-                    DropdownMenuItem(
+                      Text("Feedback Proportional"),),
+                    const DropdownMenuItem(
+                      value: "2",
                       child:
-                      Text("Feedback2"), value: "2",),
-                    DropdownMenuItem(
+                      Text("Feedback Integral"),),
+                    const DropdownMenuItem(
+                      value: "3",
                       child:
-                      Text("Feedback2"), value: "3",),
-                    DropdownMenuItem(
+                      Text("Feedback Differential"),),
+                    const DropdownMenuItem(
+                      value: "4",
                       child:
-                      Text("Size in Pixels"), value: "4",),
-                    DropdownMenuItem(
+                      Text("Size in Pixels"),),
+                    const DropdownMenuItem(
+                      value: "5",
                       child:
-                      Text("Size in nm"), value: "5",),
-                    DropdownMenuItem(
+                      Text("Size in nm"),),
+                    const DropdownMenuItem(
+                      value: "6",
                       child:
-                      Text("Sample Bias, V"), value: "6",),
-                    DropdownMenuItem(
+                      Text("Sample Bias, V"),),
+                    const DropdownMenuItem(
+                      value: "7",
                       child:
-                      Text("Tunneling Current, nA"), value: "7",),
-                    DropdownMenuItem(
+                      Text("Tunneling Current, nA"),),
+                    const DropdownMenuItem(
+                      value: "8",
                       child:
-                      Text("Sample Name"), value: "8",),
-                    DropdownMenuItem(
+                      Text("Sample Name"),),
+                    const DropdownMenuItem(
+                      value: "9",
                       child:
-                      Text("Sample Name"), value: "9",),
+                      Text("Tip Name"),),
                   ],
-                  onChanged: (v) {},
+                  onChanged: (v) {dropdownSelectedValue = v;},
               )
           )
         ],
@@ -175,11 +247,11 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget>
           Expanded(
               child: TextField(
                   keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   labelText: "Input your parameters"),
                   textAlign: TextAlign.center,
-                  onSubmitted: (String string) {}
+                  onSubmitted: (String input) {setValue(input);}
               ),
           ),
         ],
@@ -356,7 +428,7 @@ class CurtainPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     var paint = Paint()..color = Colors.indigoAccent.shade100;
     canvas.drawRect(
-        Offset(0, 0) &
+        const Offset(0, 0) &
         Size(size.width,
             (size.height / nmbrpxl) * ((1 - value) * nmbrpxl).truncate()),
         paint);
