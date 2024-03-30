@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
-
+import 'parametersActions.dart';
 
 import 'package:flutter/material.dart';
 
@@ -10,10 +10,12 @@ var alphaList = <int>[];
 var redList = <int>[];
 var greenList = <int>[];
 var blueList = <int>[];
+
 void main() => runApp(const SPMapp());
 
 class SPMapp extends StatelessWidget {
   const SPMapp({super.key});
+
 
   static const String _title = 'Virtual Scanning Probe Microscope';
 
@@ -89,62 +91,6 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget>
     super.dispose();
   }
 
-  void setValue(String input){
-
-    switch (dropdownSelectedValue){
-      case "-1":
-        tscan = int.tryParse(input)!;
-        _controller.duration = Duration(seconds: tscan);
-        break;
-      case "0":
-        break;
-      case "1":
-        tscan = int.tryParse(input)!;
-        break;
-      case "2":
-        tscan = int.tryParse(input)!;
-        break;
-      case "3":
-        // nmbrpxl = int.tryParse(input)!;
-        break;
-      case "4":
-        setState(() {
-          int imgpxl = nmbrpxls * nmbrpxls;
-          for (int i = 0; i < imgpxl; i++) {
-            alphaList.removeLast();
-            redList.removeLast();
-            greenList.removeLast();
-            blueList.removeLast();
-          }
-          nmbrpxls = int.tryParse(input)!;
-          imgpxl = nmbrpxls * nmbrpxls;
-          final random = Random();
-          for (int i = 0; i < imgpxl; i++) {
-            alphaList.add(random.nextInt(255));
-            redList.add(random.nextInt(255));
-            greenList.add(random.nextInt(255));
-            blueList.add(random.nextInt(255));
-          }
-        });
-        break;
-      case "5":
-        // nmbrpxl = int.tryParse(input)!;
-        break;
-      case "6":
-        tscan = int.tryParse(input)!;
-        break;
-      case "7":
-        // nmbrpxl = int.tryParse(input)!;
-        break;
-      case "8":
-        sampleName = input;
-        break;
-      case "9":
-        tipName = input;
-        break;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Column(children: [
@@ -198,7 +144,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget>
                     DropdownMenuItem(
                         value: "0",
                         child:
-                        Text("Time per pixel, ms"+ tscan.toString()),),
+                        Text("Time per pixel, ms"+ 10.toString()),),
                     const DropdownMenuItem(
                       value: "1",
                       child:
@@ -251,170 +197,11 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget>
                   border: OutlineInputBorder(),
                   labelText: "Input your parameters"),
                   textAlign: TextAlign.center,
-                  onSubmitted: (String input) {setValue(input);}
+                  onSubmitted: (String input) {setValue(input, dropdownSelectedValue);}
               ),
           ),
         ],
       ),
-
-
-//       Row(
-//         children: [
-//           Expanded(
-//               child: TextField(
-//                   focusNode: FirstDisabledFocusNode(),
-//                   keyboardType: TextInputType.number,
-//                   decoration: InputDecoration(
-//                       border: OutlineInputBorder(),
-//                       labelText: "Time per pixel, ms" + tscan.toString()),
-//                   textAlign: TextAlign.center,
-//                   onSubmitted: (String string) {
-//                     tscan = int.tryParse(string)!;
-//                     _controller.duration = Duration(seconds: tscan);
-//                   })),
-//           Expanded(
-//               child: TextField(
-//                   focusNode: FirstDisabledFocusNode(),
-//                   keyboardType: TextInputType.number,
-//                   decoration: InputDecoration(
-//                       border: OutlineInputBorder(),
-//                       labelText: "Size in Pixels"),
-//                   textAlign: TextAlign.center,
-//                   onSubmitted: (String string) {
-//                     setState(() {
-//                       int imgpxl = nmbrpxls * nmbrpxls;
-//                       for (int i = 0; i < imgpxl; i++) {
-//                         alphaList.removeLast();
-//                         redList.removeLast();
-//                         greenList.removeLast();
-//                         blueList.removeLast();
-//                       }
-//                       nmbrpxls = int.tryParse(string)!;
-//                       imgpxl = nmbrpxls * nmbrpxls;
-//                       final random = Random();
-//                       for (int i = 0; i < imgpxl; i++) {
-//                         alphaList.add(random.nextInt(255));
-//                         redList.add(random.nextInt(255));
-//                         greenList.add(random.nextInt(255));
-//                         blueList.add(random.nextInt(255));
-//                       }
-//                     });
-//                   })),
-//         ],
-//       ),
-//       Row(
-//         children: [
-//           Expanded(
-//             child:
-//             TextField(
-//                   focusNode: FirstDisabledFocusNode(),
-//                   keyboardType: TextInputType.number,
-//                   decoration: InputDecoration(
-//                       border: OutlineInputBorder(),
-//                       labelText: "Feedback Proportional"
-//                   ),
-//                   textAlign: TextAlign.center,
-//                   onSubmitted: (String string) {
-//                   //   tscan = int.tryParse(string)!;
-//                   },
-//                 ),
-//           ),
-//
-//           Expanded(
-//             child:
-//             TextField(
-//                 focusNode: FirstDisabledFocusNode(),
-//                 keyboardType: TextInputType.number,
-//                 decoration: InputDecoration(
-//                     border: OutlineInputBorder(),
-//                     labelText: "Feedback Differential"
-//                 ),
-//                 textAlign: TextAlign.center,
-//                   onSubmitted: (String string) {
-//                     // nmbrpxl = int.tryParse(string)!;
-//                   }
-//               ),
-//           ),
-//         ],
-//       ),
-//
-//       Row(
-//         children: [
-//           Expanded(
-//             child:
-//             TextField(
-//                 focusNode: FirstDisabledFocusNode(),
-//                 keyboardType: TextInputType.number,
-//                 decoration: InputDecoration(
-//                     border: OutlineInputBorder(),
-//                     labelText: "Feedback Integral"
-//                 ),
-//                 textAlign: TextAlign.center,
-//                 onSubmitted: (String string) {
-//                   //tscan = int.tryParse(string)!;
-//                 }
-//             ),
-//           ),
-//           Expanded(
-//               child: TextField(
-//                   focusNode: FirstDisabledFocusNode(),
-//                   keyboardType: TextInputType.number,
-//                   decoration: InputDecoration(
-//                       border: OutlineInputBorder(), labelText: "Size in nm"),
-//                   textAlign: TextAlign.center,
-//                   onSubmitted: (String string) {
-//                     // nmbrpxl = int.tryParse(string)!;
-//                   })),
-//         ],
-//       ),
-//
-//       Row(
-//         children: [
-//           Expanded(
-//               child: TextField(
-//                   focusNode: FirstDisabledFocusNode(),
-//                   keyboardType: TextInputType.number,
-//                   decoration: InputDecoration(
-//                       border: OutlineInputBorder(),
-//                       labelText: "Sample Bias, V"),
-//                   textAlign: TextAlign.center,
-//                   onSubmitted: (String string) {
-//                     //tscan = int.tryParse(string)!;
-//                   })),
-//           Expanded(
-//               child: TextField(
-//                   focusNode: FirstDisabledFocusNode(),
-//                   keyboardType: TextInputType.number,
-//                   decoration: InputDecoration(
-//                       border: OutlineInputBorder(),
-//                       labelText: "Tunneling Current, nA"),
-//                   textAlign: TextAlign.center,
-//                   onSubmitted: (String string) {
-// //                    nmbrpxl = int.tryParse(string)!;
-//                   })),
-//         ],
-//       ),
-//       Row(
-//         children: [
-//           Expanded(
-//               child: TextField(
-//                   focusNode: FirstDisabledFocusNode(),
-//                   keyboardType: TextInputType.text,
-//                   decoration: InputDecoration(
-//                       border: OutlineInputBorder(), labelText: "Sample Name"),
-//                   textAlign: TextAlign.center,
-//                   onSubmitted: (String string) {})),
-//           Expanded(
-//               child: TextField(
-//                   focusNode: FirstDisabledFocusNode(),
-//                   keyboardType: TextInputType.text,
-//                   decoration: InputDecoration(
-//                       border: OutlineInputBorder(), labelText: "Tip Name"),
-//                   textAlign: TextAlign.center,
-//                   onSubmitted: (String string) {})),
-//         ],
-//       )
-
     ]);
   }
 }
@@ -474,4 +261,5 @@ class ImagePainter extends CustomPainter {
 
   @override
   bool shouldRepaint(CustomPainter oldDelegate) => true;
+
 }
