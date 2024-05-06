@@ -1,7 +1,9 @@
 import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
+import 'microscopeTransmission.dart';
 import 'parametersActions.dart';
+import 'dart:developer' as developer;
 
 import 'package:flutter/material.dart';
 
@@ -52,6 +54,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget>
   String? dropdownSelectedValue = "0";
   String? sampleName;
   String? tipName;
+  bool isScaning = false;
 
 
   @override
@@ -91,9 +94,21 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget>
     super.dispose();
   }
 
+
+
   @override
   Widget build(BuildContext context) {
+    final gamma = AssetImage('images/gamma.png');
+    MicroscopeParams microscopeParams = MicroscopeParams();
     return Column(children: [
+      Row(
+        children: [
+          Expanded(
+            child: Image(image: gamma,)
+          ),
+        ],
+      ),
+
       AspectRatio(
           aspectRatio: 1,
           child: Stack(alignment: Alignment.topLeft, children: <Widget>[
@@ -107,26 +122,39 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget>
                 painter:
                 CurtainPainter(value: _controller.value, nmbrpxl: nmbrpxls))
           ])),
+
       Row(
         children: [
           Expanded(
-            child: TextButton(
+            child: ElevatedButton(
               style: TextButton.styleFrom(
                 textStyle: const TextStyle(fontSize: 20),
               ),
               onPressed: () {
+                sendPOST(microscopeParams);
                 _controller.forward();
+                isScaning = true;
+                null;
               },
-              child: const Text('Start'),
+              child: Text('Start'),
             ),
           ),
           Expanded(
-            child: TextButton(
+            child: ElevatedButton(
               style: TextButton.styleFrom(
                 textStyle: const TextStyle(fontSize: 20),
               ),
-              onPressed: () => _controller.stop(),
-              child: const Text('Stop'),
+              child: isScaning ? Text('Pause') : Text('Resume'),
+              onPressed: (){
+                if(isScaning){
+                  _controller.stop();
+                }else{
+                  _controller.forward();
+                }
+                setState(() {
+                  isScaning = !isScaning;
+                });
+              },
             ),
           ),
         ],
@@ -139,50 +167,50 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget>
                 decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: "All parmeters"),
-                  value: "0",
-                  items: [
-                    DropdownMenuItem(
-                        value: "0",
-                        child:
-                        Text("Time per pixel, ms"+ 10.toString()),),
-                    const DropdownMenuItem(
-                      value: "1",
-                      child:
-                      Text("Feedback Proportional"),),
-                    const DropdownMenuItem(
-                      value: "2",
-                      child:
-                      Text("Feedback Integral"),),
-                    const DropdownMenuItem(
-                      value: "3",
-                      child:
-                      Text("Feedback Differential"),),
-                    const DropdownMenuItem(
-                      value: "4",
-                      child:
-                      Text("Size in Pixels"),),
-                    const DropdownMenuItem(
-                      value: "5",
-                      child:
-                      Text("Size in nm"),),
-                    const DropdownMenuItem(
-                      value: "6",
-                      child:
-                      Text("Sample Bias, V"),),
-                    const DropdownMenuItem(
-                      value: "7",
-                      child:
-                      Text("Tunneling Current, nA"),),
-                    const DropdownMenuItem(
-                      value: "8",
-                      child:
-                      Text("Sample Name"),),
-                    const DropdownMenuItem(
-                      value: "9",
-                      child:
-                      Text("Tip Name"),),
-                  ],
-                  onChanged: (v) {dropdownSelectedValue = v;},
+                value: "0",
+                items: [
+                  DropdownMenuItem(
+                    value: "0",
+                    child:
+                    Text("Time per pixel, ms"+ 10.toString()),),
+                  const DropdownMenuItem(
+                    value: "1",
+                    child:
+                    Text("Feedback Proportional"),),
+                  const DropdownMenuItem(
+                    value: "2",
+                    child:
+                    Text("Feedback Integral"),),
+                  const DropdownMenuItem(
+                    value: "3",
+                    child:
+                    Text("Feedback Differential"),),
+                  const DropdownMenuItem(
+                    value: "4",
+                    child:
+                    Text("Size in Pixels"),),
+                  const DropdownMenuItem(
+                    value: "5",
+                    child:
+                    Text("Size in nm"),),
+                  const DropdownMenuItem(
+                    value: "6",
+                    child:
+                    Text("Sample Bias, V"),),
+                  const DropdownMenuItem(
+                    value: "7",
+                    child:
+                    Text("Tunneling Current, nA"),),
+                  const DropdownMenuItem(
+                    value: "8",
+                    child:
+                    Text("Sample Name"),),
+                  const DropdownMenuItem(
+                    value: "9",
+                    child:
+                    Text("Tip Name"),),
+                ],
+                onChanged: (v) {dropdownSelectedValue = v;},
               )
           )
         ],
@@ -191,17 +219,45 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget>
       Row(
         children: [
           Expanded(
-              child: TextField(
-                  keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: "Input your parameters"),
-                  textAlign: TextAlign.center,
-                  onSubmitted: (String input) {setValue(input, dropdownSelectedValue);}
-              ),
+            child: TextField(
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: "Input your parameters"),
+                textAlign: TextAlign.center,
+                onSubmitted: (String input) {microscopeParams.setValue(input, dropdownSelectedValue);}
+            ),
           ),
         ],
       ),
+
+      Row(
+        children: [
+          Expanded(
+            child: ElevatedButton(
+              style: TextButton.styleFrom(
+                textStyle: const TextStyle(fontSize: 20),
+              ),
+              onPressed: () {
+
+              },
+              child: Text('Clean'),
+            ),
+          ),
+          Expanded(
+            child: ElevatedButton(
+              style: TextButton.styleFrom(
+                textStyle: const TextStyle(fontSize: 20),
+              ),
+              onPressed: () => _controller.stop(),
+
+              child: Text('Save'),
+            ),
+          ),
+        ],
+      ),
+
+
     ]);
   }
 }
