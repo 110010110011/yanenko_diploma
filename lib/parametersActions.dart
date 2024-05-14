@@ -1,14 +1,14 @@
 class MicroscopeParams {
-  late int timePerPxl;
-  late int proportionalFeedback;
-  late int integralFeedback;
-  late int differentialFeedback;
-  late int sizeInPxl;
-  late int sizeInNm;
-  late int sampleBias;
-  late int tunnelingCurrent;
-  late int sampleName;
-  late int tipName;
+  late int timePerPxl = 10;
+  late int proportionalFeedback = 1;
+  late int integralFeedback = 1;
+  late int differentialFeedback = 1;
+  late int sizeInPxl = 50;
+  late int sizeInNm = 100;
+  late int sampleBias = 100;
+  late int tunnelingCurrent = 100;
+  late String sampleName;
+  late String tipName;
 
 
   void setValue(String input, String? dropdownSelectedValue) {
@@ -40,10 +40,10 @@ class MicroscopeParams {
         tunnelingCurrent = int.tryParse(input)!;
         break;
       case "8":
-        sampleName = int.tryParse(input)!;
+        sampleName = input!;
         break;
       case "9":
-        tipName = int.tryParse(input)!;
+        tipName = input!;
         break;
     }
   }

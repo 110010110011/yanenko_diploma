@@ -109,6 +109,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget>
         ],
       ),
 
+      Divider(color: Colors.black, height: 1, thickness: 3),
       AspectRatio(
           aspectRatio: 1,
           child: Stack(alignment: Alignment.topLeft, children: <Widget>[
