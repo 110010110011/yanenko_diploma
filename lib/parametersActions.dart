@@ -7,8 +7,8 @@ class MicroscopeParams {
   late int sizeInNm = 100;
   late int sampleBias = 100;
   late int tunnelingCurrent = 100;
-  late String sampleName;
-  late String tipName;
+  late String sampleName = "";
+  late String tipName = "";
 
 
   void setValue(String input, String? dropdownSelectedValue) {

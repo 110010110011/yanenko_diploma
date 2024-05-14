@@ -1,6 +1,10 @@
+import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
+import 'package:flutter/services.dart';
+
 import 'microscopeTransmission.dart';
 import 'parametersActions.dart';
 import 'dart:developer' as developer;
@@ -48,6 +52,8 @@ class FirstDisabledFocusNode extends FocusNode {
 
 class _MyStatefulWidgetState extends State<MyStatefulWidget>
     with SingleTickerProviderStateMixin {
+  List<Color?> pixels = List.filled(100, Colors.grey[200]);
+  late int rowStartPoint = pixels.length - sqrt(pixels.length).toInt() - index;
   int tscan = 10;
   late AnimationController _controller;
   late Uint8List imageData; //
@@ -55,6 +61,74 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget>
   String? sampleName;
   String? tipName;
   bool isScaning = false;
+
+  late List<Color?> loadedPixels;
+  int index = 0;
+  int counter = 0;
+  late Timer timer;
+  bool goRight = true;
+
+
+  List<Color?> getColorListFromJson(Map<String, dynamic> json){
+    List<Color?> colors = <Color>[];
+
+    for (var row in json['pixels']){
+      for (var pixel in row){
+        colors.add(Color.fromARGB(255, pixel[0], pixel[1], pixel[2]));
+      }
+    }
+
+    return colors;
+  }
+
+  Future<List<Color?>> loadPixelGrid() async {
+    String jsonString = await rootBundle.loadString('images/pixels.json');
+    Map<String, dynamic> jsonMap = json.decode(jsonString);
+    loadedPixels = getColorListFromJson(jsonMap);
+    return loadedPixels;
+  }
+
+  void drawPixelsRandomly() {
+
+    setState(() {
+      loadPixelGrid();
+    });
+
+    // rowStartPoint = pixels.length - sqrt(pixels.length).toInt() - index;
+
+    timer = Timer.periodic(Duration(milliseconds: 500), (timer) {
+      if (index < pixels.length) {
+        setState(() {
+          if (counter == sqrt(loadedPixels.length).toInt()){
+            goRight = !goRight;
+            counter = 0;
+            if (goRight){
+              rowStartPoint = loadedPixels.length - sqrt(loadedPixels.length).toInt() - index;
+            }
+            else{
+              rowStartPoint = loadedPixels.length - index - 1;
+            }
+          }
+          if (goRight){
+            pixels[rowStartPoint + counter] = loadedPixels[index];
+            counter++;
+          }
+          else{
+            pixels[rowStartPoint - counter] = loadedPixels[index];
+            counter++;
+          }
+
+          index++;
+        });
+      } else {
+        timer.cancel();
+      }
+    });
+  }
+
+  void stopDrawing() {
+    timer.cancel();
+  }
 
 
   @override
@@ -98,31 +172,65 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget>
 
   @override
   Widget build(BuildContext context) {
-    final gamma = AssetImage('images/gamma.png');
+    // final gamma = AssetImage('images/gamma.png');
     MicroscopeParams microscopeParams = MicroscopeParams();
     return Column(children: [
-      Row(
-        children: [
-          Expanded(
-            child: Image(image: gamma,)
-          ),
-        ],
+      Container(
+        decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                Colors.black,
+                Colors.indigo,
+                Colors.blue,
+                Colors.blue,
+                Colors.yellow,
+                Colors.yellow,
+                Colors.yellow,
+                Colors.yellow,
+                Colors.white
+              ],
+            )
+        ),
+        width: MediaQuery.of(context).size.width,
+        height: 50,
       ),
+      // Row(
+      //   children: [
+      //     Expanded(
+      //       child: Image(image: gamma,)
+      //     ),
+      //   ],
+      // ),
 
       Divider(color: Colors.black, height: 1, thickness: 3),
-      AspectRatio(
-          aspectRatio: 1,
-          child: Stack(alignment: Alignment.topLeft, children: <Widget>[
-            //Image.memory(imageData),
-            //Image.asset('images/STMimage.jpg'),
-            // CustomPaint(
-            //     size: MediaQuery.of(context).size,
-            //     painter: ImagePainter(nmbrpxl: nmbrpxls)),
-            CustomPaint(
-                size: MediaQuery.of(context).size,
-                painter:
-                CurtainPainter(value: _controller.value, nmbrpxl: nmbrpxls))
-          ])),
+
+      GridView.builder(
+        shrinkWrap: true,
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 10,
+        ),
+        itemCount: pixels.length,
+        itemBuilder: (BuildContext context, int index) {
+          return Container(
+            width: 20,
+            height: 20,
+            color: pixels[index],
+          );
+        },
+      ),
+      // AspectRatio(
+      //     aspectRatio: 1,
+      //     child: Stack(alignment: Alignment.topLeft, children: <Widget>[
+      //       //Image.memory(imageData),
+      //       //Image.asset('images/STMimage.jpg'),
+      //       // CustomPaint(
+      //       //     size: MediaQuery.of(context).size,
+      //       //     painter: ImagePainter(nmbrpxl: nmbrpxls)),
+      //       CustomPaint(
+      //           size: MediaQuery.of(context).size,
+      //           painter:
+      //           CurtainPainter(value: _controller.value, nmbrpxl: nmbrpxls))
+      //     ])),
 
       Row(
         children: [
@@ -132,10 +240,9 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget>
                 textStyle: const TextStyle(fontSize: 20),
               ),
               onPressed: () {
-                sendPOST(microscopeParams);
-                _controller.forward();
+                // sendPOST(microscopeParams);
+                drawPixelsRandomly();
                 isScaning = true;
-                null;
               },
               child: Text('Start'),
             ),
@@ -148,9 +255,9 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget>
               child: isScaning ? Text('Pause') : Text('Resume'),
               onPressed: (){
                 if(isScaning){
-                  _controller.stop();
+                  stopDrawing();
                 }else{
-                  _controller.forward();
+                  drawPixelsRandomly();
                 }
                 setState(() {
                   isScaning = !isScaning;
@@ -240,7 +347,10 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget>
                 textStyle: const TextStyle(fontSize: 20),
               ),
               onPressed: () {
-
+                setState(() {
+                  pixels = List.filled(100, Colors.grey[500]);
+                  rowStartPoint = 0;
+                });
               },
               child: Text('Clean'),
             ),
