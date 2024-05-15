@@ -1,9 +1,9 @@
 class MicroscopeParams {
-  late int timePerPxl = 10;
+  late int timePerPxl = 500;
   late int proportionalFeedback = 1;
   late int integralFeedback = 1;
   late int differentialFeedback = 1;
-  late int sizeInPxl = 50;
+  late int sizeInPxl = 10;
   late int sizeInNm = 100;
   late int sampleBias = 100;
   late int tunnelingCurrent = 100;
