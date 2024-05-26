@@ -2,9 +2,10 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/services.dart';
+import 'package:my_app/saveImage.dart';
 import 'microscopeTransmission.dart';
+import 'saveImage.dart';
 import 'parametersActions.dart';
-
 import 'package:flutter/material.dart';
 
 void main() => runApp(const SPMapp());
@@ -43,6 +44,7 @@ class FirstDisabledFocusNode extends FocusNode {
 class _MyStatefulWidgetState extends State<MyStatefulWidget>
     with SingleTickerProviderStateMixin {
   MicroscopeParams microscopeParams = MicroscopeParams();
+  SaveImages saveImg = SaveImages();
   late List<Color?> pixels;
   late int rowStartPoint;
 
@@ -150,20 +152,23 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget>
 
       Divider(color: Colors.black, height: 1, thickness: 3),
 
-      GridView.builder(
-        shrinkWrap: true,
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: microscopeParams.sizeInPxl,
+    RepaintBoundary(
+    key: saveImg.globalKey,
+      child: GridView.builder(
+          shrinkWrap: true,
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: microscopeParams.sizeInPxl,
+          ),
+          itemCount: pixels.length,
+          itemBuilder: (BuildContext context, int index) {
+            return Container(
+              width: 20,
+              height: 20,
+              color: pixels[index],
+            );
+          },
         ),
-        itemCount: pixels.length,
-        itemBuilder: (BuildContext context, int index) {
-          return Container(
-            width: 20,
-            height: 20,
-            color: pixels[index],
-          );
-        },
-      ),
+    ),
 
       Row(
         children: [
@@ -297,7 +302,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget>
               style: TextButton.styleFrom(
                 textStyle: const TextStyle(fontSize: 20),
               ),
-              onPressed: () => {},
+              onPressed: () => {saveImg.captureAndSave()},
 
               child: Text('Save'),
             ),
