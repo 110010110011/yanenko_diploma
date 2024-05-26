@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class MicroscopeParams {
   late int timePerPxl = 500;
   late int proportionalFeedback = 1;
@@ -9,6 +11,19 @@ class MicroscopeParams {
   late int tunnelingCurrent = 100;
   late String sampleName = "";
   late String tipName = "";
+
+  Map toJson() => {
+    'timePerPxl': timePerPxl,
+    'proportionalFeedback': proportionalFeedback,
+    'integralFeedback': integralFeedback,
+    'differentialFeedback': differentialFeedback,
+    'sizeInPxl': sizeInPxl,
+    'sizeInNm': sizeInNm,
+    'sampleBias': sampleBias,
+    'tunnelingCurrent': tunnelingCurrent,
+    'sampleName': sampleName,
+    'tipName': tipName,
+  };
 
 
   void setValue(String input, String? dropdownSelectedValue) {

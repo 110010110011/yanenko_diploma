@@ -3,8 +3,7 @@ import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/services.dart';
 import 'package:my_app/saveImage.dart';
-import 'microscopeTransmission.dart';
-import 'saveImage.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 import 'parametersActions.dart';
 import 'package:flutter/material.dart';
 
@@ -48,6 +47,10 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget>
   late List<Color?> pixels;
   late int rowStartPoint;
 
+  final channel = WebSocketChannel.connect(
+    Uri.parse('ws://10.0.2.2:8080/ws'),
+  );
+
   @override
   void initState(){
     super.initState();
@@ -75,7 +78,6 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget>
         colors.add(Color.fromARGB(255, pixel[0], pixel[1], pixel[2]));
       }
     }
-
     return colors;
   }
 
@@ -120,6 +122,57 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget>
         timer.cancel();
       }
     });
+  }
+
+  Future<void> confirmationDialog(BuildContext context) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // користувач має натиснути одну з кнопок
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Confirm Clean'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('Are you sure you want to clean params and image?'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop(); // закриває діалогове вікно
+              },
+            ),
+            TextButton(
+              child: Text('Yes'),
+              onPressed: () {
+                setState(() {
+                  pixels = List.filled(100, Colors.grey[500]);
+                  index = 0;
+                  counter = 0;
+                  goRight = true;
+                  rowStartPoint = pixels.length - sqrt(pixels.length).toInt() - index;
+                  microscopeParams.timePerPxl = 500;
+                  microscopeParams.proportionalFeedback = 1;
+                  microscopeParams.integralFeedback = 1;
+                  microscopeParams.differentialFeedback = 1;
+                  microscopeParams.sizeInPxl = 10;
+                  microscopeParams.sizeInNm = 100;
+                  microscopeParams.sampleBias = 100;
+                  microscopeParams.tunnelingCurrent = 100;
+                  microscopeParams.sampleName = "";
+                  microscopeParams.tipName = ""; // Set params by default
+                });
+                Navigator.of(context).pop();
+                // Додайте код для збереження даних тут
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   void stopDrawing() {
@@ -178,7 +231,15 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget>
                 textStyle: const TextStyle(fontSize: 20),
               ),
               onPressed: () {
-                //sendPOST(microscopeParams);
+                // var a = jsonEncode(microscopeParams);
+                //
+                // channel.sink.add(a);
+                // print('Data sent!');
+                //
+                // channel.stream.listen((message) {
+                //   print(message);
+                // });
+
                 drawPixelsRandomly();
                 isScanning = true;
               },
@@ -285,14 +346,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget>
                 textStyle: const TextStyle(fontSize: 20),
               ),
               onPressed: () {
-                setState(() {
-                  pixels = List.filled(100, Colors.grey[500]);
-                  index = 0;
-                  counter = 0;
-                  // timer = microscopeParams.timePerPxl as Timer;
-                  goRight = true;
-                  rowStartPoint = pixels.length - sqrt(pixels.length).toInt() - index;
-                });
+                confirmationDialog(context);
               },
               child: Text('Clean'),
             ),
@@ -309,9 +363,8 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget>
           ),
         ],
       ),
-
-
     ]);
+
   }
 }
 
