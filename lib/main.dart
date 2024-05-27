@@ -18,22 +18,23 @@ class SPMapp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: _title,
+        title: _title, // The title of app, which appears in the app's title bar.
           home: Scaffold(
           appBar: AppBar(title: const Text(_title)),
-          body: const MyStatefulWidget(), //duration: Duration(seconds: tscan)),
+          body: const MyStatefulWidget(), // The main content of the app, represented here by the MyStatefulWidget.
         ));
   }
 }
 
 class MyStatefulWidget extends StatefulWidget {
-  const MyStatefulWidget({super.key}); //, required this.duration});
+  const MyStatefulWidget({super.key}); // Additional parameters can be added if needed
 
   @override
   State<MyStatefulWidget> createState() => _MyStatefulWidgetState();
 }
-
+// Define a custom FocusNode class named FirstDisabledFocusNode
 class FirstDisabledFocusNode extends FocusNode {
+  // Override the consumeKeyboardToken method to return false
   @override
   bool consumeKeyboardToken() {
     return false;
@@ -42,11 +43,12 @@ class FirstDisabledFocusNode extends FocusNode {
 
 class _MyStatefulWidgetState extends State<MyStatefulWidget>
     with SingleTickerProviderStateMixin {
-  MicroscopeParams microscopeParams = MicroscopeParams();
-  SaveImages saveImg = SaveImages();
-  late List<Color?> pixels;
-  late int rowStartPoint;
+  MicroscopeParams microscopeParams = MicroscopeParams(); // Instance of MicroscopeParams class, likely containing parameters for the microscope
+  SaveImages saveImg = SaveImages();  // Instance of SaveImages class, likely responsible for saving images
+  late List<Color?> pixels; // List of colors representing pixels, declared as late to be initialized in initState
+  late int rowStartPoint; // Starting point for the row, declared as late to be initialized in initState
 
+  // WebSocket channel for communication, connecting to a local server
   final channel = WebSocketChannel.connect(
     Uri.parse('ws://10.0.2.2:8080/ws'),
   );
@@ -54,28 +56,36 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget>
   @override
   void initState(){
     super.initState();
+    // Initialize pixels with a list filled with grey color, based on microscope parameters
     pixels = List.filled(pow(microscopeParams.sizeInPxl, 2).toInt(), Colors.grey[200]);
-    rowStartPoint = pixels.length - sqrt(pixels.length).toInt() - index;
+    rowStartPoint = pixels.length - sqrt(pixels.length).toInt() - index; // Calculate the starting point of the row based on the total number of pixels
   }
 
+  // Variables for dropdown selection and names, with initial value for dropdown
   String? dropdownSelectedValue = "0";
   String? sampleName;
   String? tipName;
 
+  // Boolean to track if scanning is in progress
   bool isScanning = false;
+  // List of colors to represent loaded pixels, declared as late to be initialized later
   late List<Color?> loadedPixels;
+  // Index and counter variables, initialized to zero
   int index = 0;
   int counter = 0;
+  // Timer for managing scan timing, declared as late to be initialized later
   late Timer timer;
+  // Boolean to track scan direction, initialized to true
   bool goRight = true;
 
-
+// Method to convert a JSON map to a list of colors
   List<Color?> getColorListFromJson(Map<String, dynamic> json){
     List<Color?> colors = <Color>[];
 
+    // Iterate through rows and pixels in the JSON to extract color information
     for (var row in json['pixels']){
       for (var pixel in row){
-        colors.add(Color.fromARGB(255, pixel[0], pixel[1], pixel[2]));
+        colors.add(Color.fromARGB(255, pixel[0], pixel[1], pixel[2])); // Add color to the list by converting ARGB values from JSON
       }
     }
     return colors;
