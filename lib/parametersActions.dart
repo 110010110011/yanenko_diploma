@@ -1,6 +1,5 @@
-import 'dart:convert';
-
 class MicroscopeParams {
+  late String processId;
   late int timePerPxl = 500;
   late int proportionalFeedback = 1;
   late int integralFeedback = 1;
@@ -13,14 +12,15 @@ class MicroscopeParams {
   late String tipName = "";
 
   Map toJson() => {
-    'timePerPxl': timePerPxl,
-    'proportionalFeedback': proportionalFeedback,
-    'integralFeedback': integralFeedback,
-    'differentialFeedback': differentialFeedback,
-    'sizeInPxl': sizeInPxl,
-    'sizeInNm': sizeInNm,
-    'sampleBias': sampleBias,
-    'tunnelingCurrent': tunnelingCurrent,
+    'processId': processId,
+    'timePerPxl': timePerPxl.toString(),
+    'proportionalFeedback': proportionalFeedback.toString(),
+    'integralFeedback': integralFeedback.toString(),
+    'differentialFeedback': differentialFeedback.toString(),
+    'sizeInPxl': sizeInPxl.toString(),
+    'sizeInNm': sizeInNm.toString(),
+    'sampleBias': sampleBias.toString(),
+    'tunnelingCurrent': tunnelingCurrent.toString(),
     'sampleName': sampleName,
     'tipName': tipName,
   };
@@ -55,10 +55,10 @@ class MicroscopeParams {
         tunnelingCurrent = int.tryParse(input)!;
         break;
       case "8":
-        sampleName = input!;
+        sampleName = input;
         break;
       case "9":
-        tipName = input!;
+        tipName = input;
         break;
     }
   }

@@ -39,6 +39,8 @@ dependencies:
   http: ^1.2.1
   web_socket_client: ^0.1.2
   web_socket_channel: ^2.4.5
+  uuid: ^4.4.0
+  confirm_dialog: ^1.0.3
 
 dev_dependencies:
   flutter_test:
